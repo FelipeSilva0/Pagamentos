@@ -22,10 +22,8 @@ namespace Pagamentos.API.Controllers
         // api/prestadores?query=net core
         [HttpGet]
         [Authorize(Roles = "cadastrador, administrador")]
-        public async Task<IActionResult> Get(string query)
+        public async Task<IActionResult> Get(GetPrestadoresQuery getPrestadoresQuery)
         {
-            var getPrestadoresQuery = new GetPrestadoresQuery(query);
-
             var prestadores = await _mediator.Send(getPrestadoresQuery);
 
             return Ok(prestadores);

@@ -2,7 +2,7 @@
 using Pagamentos.Application.Commands.CreatePrestador;
 using Pagamentos.Core.Entities;
 using Pagamentos.Core.Repositories;
-
+using Pagamentos.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,10 @@ namespace Pagamentos.UnitTests.Application.Commands
         public async Task InputDataIsOk_Executed_ReturnPrestadorId()
         {
             // Arrange
+            var unitOfWork = new Mock<IUnitOfWork>();
             var prestadorRepository = new Mock<IPrestadorRepository>();
 
+            unitOfWork.SetupGet(uow => uow.Prestadores).Returns(prestadorRepository.Object);
             var createPrestadorCommand = new CreatePrestadorCommand
             {
                 Apelido = "Especialistas",
@@ -48,7 +50,7 @@ namespace Pagamentos.UnitTests.Application.Commands
                 CPF = "371.001.188-40" 
             };
 
-            var createPrestadorCommandHandler = new CreatePrestadorCommandHandler(prestadorRepository.Object);
+            var createPrestadorCommandHandler = new CreatePrestadorCommandHandler(unitOfWork.Object);
 
             // Act
             var id = await createPrestadorCommandHandler.Handle(createPrestadorCommand, new CancellationToken());

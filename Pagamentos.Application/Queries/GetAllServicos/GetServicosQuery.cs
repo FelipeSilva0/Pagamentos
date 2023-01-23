@@ -1,20 +1,13 @@
 ﻿using MediatR;
 using Pagamentos.Application.ViewModels;
-using System;
+using Pagamentos.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pagamentos.Application.Queries.GetAllServicos
 {
-    public class GetServicosQuery : IRequest<List<ServicosViewModel>>
+    public class GetServicosQuery : IRequest<PaginationResult<ServicosViewModel>>
     {
-        public GetServicosQuery(string query)
-        {
-            Query = query;
-        }
-
-        public string Query { get; private set; }
+        public string Query { get; set; }
+        public int Page { get; set; } = 1;
     }
 }

@@ -22,10 +22,8 @@ namespace Pagamentos.API.Controllers
         // api/servicos?query=net core
         [HttpGet]
         [Authorize(Roles = "cadastrador, administrador")]
-        public async Task<IActionResult> Get(string query)
+        public async Task<IActionResult> Get(GetServicosQuery getServicosQuery)
         {
-            var getServicosQuery = new GetServicosQuery(query);
-
             var servicos = await _mediator.Send(getServicosQuery);
 
             return Ok(servicos);

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Pagamentos.Application.ViewModels;
+using Pagamentos.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,9 @@ using System.Threading.Tasks;
 
 namespace Pagamentos.Application.Queries.GetAllPrestadores
 {
-    public class GetPrestadoresQuery : IRequest<List<PrestadoresViewModel>>
+    public class GetPrestadoresQuery : IRequest<PaginationResult<PrestadoresViewModel>>
     {
-        public GetPrestadoresQuery(string query)
-        {
-            Query = query;
-        }
-
-        public string Query { get; private set; }
+        public string Query { get; set; }
+        public int Page { get; set; } = 1;
     }
 }

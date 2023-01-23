@@ -10,10 +10,10 @@ namespace Pagamentos.Application.Commands.CreatePrestador
 {
     public class CreatePrestadorCommandHandler : IRequestHandler<CreatePrestadorCommand, int>
     {
-        private readonly IPrestadorRepository _prestadorRepository;
-        public CreatePrestadorCommandHandler(IPrestadorRepository prestadorRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public CreatePrestadorCommandHandler(IUnitOfWork unitOfWork)
         {
-            _prestadorRepository = prestadorRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<int> Handle(CreatePrestadorCommand request, CancellationToken cancellationToken)
@@ -24,7 +24,13 @@ namespace Pagamentos.Application.Commands.CreatePrestador
                                             request.TipoDoc, request.Banco, request.Agencia, request.Conta, request.TipoPix, request.Pix,
                                             request.Favorecido, request.CPF);
 
-            await _prestadorRepository.AddAsync(prestador);
+            await _unitOfWork.BeginTransactionAsync();
+
+            await _unitOfWork.Prestadores.AddAsync(prestador);
+
+            await _unitOfWork.CompleteAsync();
+
+            await _unitOfWork.CommitAsync();
 
             return prestador.Id;
         }

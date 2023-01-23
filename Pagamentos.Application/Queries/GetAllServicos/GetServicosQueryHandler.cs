@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Pagamentos.Application.ViewModels;
+using Pagamentos.Core.Models;
 using Pagamentos.Core.Repositories;
 using Pagamentos.Infrastructure.Persistence;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pagamentos.Application.Queries.GetAllServicos
 {
-    public class GetServicosQueryHandler : IRequestHandler<GetServicosQuery, List<ServicosViewModel>>
+    public class GetServicosQueryHandler : IRequestHandler<GetServicosQuery, PaginationResult<ServicosViewModel>>
     {
         private readonly IServicoRepository _servicoRepository;
         public GetServicosQueryHandler(IServicoRepository servicoRepository)
@@ -18,15 +19,24 @@ namespace Pagamentos.Application.Queries.GetAllServicos
             _servicoRepository = servicoRepository;
         }
 
-        public async Task<List<ServicosViewModel>> Handle(GetServicosQuery request, CancellationToken cancellationToken)
+        public async Task<PaginationResult<ServicosViewModel>> Handle(GetServicosQuery request, CancellationToken cancellationToken)
         {
-            var servicos = await _servicoRepository.GetAllAsync();
+            var servicosPaginationResult = await _servicoRepository.GetAllAsync(request.Query, request.Page);
 
-            var servicosViewModel = servicos
+            var servicosViewModel = servicosPaginationResult
+                .Data
                 .Select(p => new ServicosViewModel(p.Id, p.Servico, p.Valor, p.IdPrestador))
                 .ToList();
 
-            return servicosViewModel;
+            var paginationResult = new PaginationResult<ServicosViewModel>(
+               servicosPaginationResult.Page,
+               servicosPaginationResult.TotalPages,
+               servicosPaginationResult.PageSize,
+               servicosPaginationResult.ItemsCount,
+               servicosViewModel
+            );
+
+            return paginationResult;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pagamentos.Core.Entities;
+using Pagamentos.Core.Models;
 using Pagamentos.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,27 @@ namespace Pagamentos.Infrastructure.Persistence.Repositories
     public class ServicoRepository : IServicoRepository
     {
         private readonly PagamentosDbContext _dbContext;
-        private readonly string _connectionString;
-        public ServicoRepository(PagamentosDbContext dbContext, IConfiguration configuration)
+        private const int PAGE_SIZE = 2;
+        public ServicoRepository(PagamentosDbContext dbContext)
         {
             _dbContext = dbContext;
-            _connectionString = configuration.GetConnectionString("Pagamentos");
         }
 
-        public async Task<List<Servicos>> GetAllAsync()
+        public async Task<PaginationResult<Servicos>> GetAllAsync(string query, int page)
         {
-            return await _dbContext.Servicos.ToListAsync();
+            // Filtro
+            IQueryable<Servicos> servicos = _dbContext.Servicos;
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                servicos = servicos
+                    .Where(p =>
+                        p.Servico.Contains(query) ||
+                        p.IdPrestador.ToString().Contains(query) ||
+                        p.Valor.ToString().Contains(query));
+            }
+
+            return await servicos.GetPaged<Servicos>(page, PAGE_SIZE);
         }
 
         public async Task<Servicos> GetDetailsByIdAsync(int id)
@@ -34,7 +46,6 @@ namespace Pagamentos.Infrastructure.Persistence.Repositories
         public async Task AddAsync(Servicos servico)
         {
             await _dbContext.Servicos.AddAsync(servico);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync()
