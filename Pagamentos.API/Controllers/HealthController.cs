@@ -4,6 +4,8 @@ using Pagamentos.API.Health;
 using Pagamentos.API.Models;
 using System;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pagamentos.API.Controllers
 {
@@ -20,12 +22,12 @@ namespace Pagamentos.API.Controllers
         }
 
         [HttpGet("details")]
-        public IActionResult GetDetails()
+        public async Task<IActionResult> GetDetails(CancellationToken ct = default)
         {
             bool canConnect;
             try
             {
-                canConnect = _dbHealthCheck.CanConnect();
+                canConnect = await _dbHealthCheck.CanConnectAsync(ct);
             }
             catch
             {

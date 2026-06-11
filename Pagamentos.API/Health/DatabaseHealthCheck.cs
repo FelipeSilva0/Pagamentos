@@ -1,4 +1,6 @@
 using Pagamentos.Infrastructure.Persistence;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pagamentos.API.Health
 {
@@ -11,9 +13,9 @@ namespace Pagamentos.API.Health
             _context = context;
         }
 
-        public bool CanConnect()
+        public async Task<bool> CanConnectAsync(CancellationToken ct = default)
         {
-            return _context.Database.CanConnect();
+            return await _context.Database.CanConnectAsync(ct);
         }
     }
 }

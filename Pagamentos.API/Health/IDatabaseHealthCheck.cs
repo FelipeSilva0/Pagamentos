@@ -1,7 +1,10 @@
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Pagamentos.API.Health
 {
     public interface IDatabaseHealthCheck
     {
-        bool CanConnect();
+        Task<bool> CanConnectAsync(CancellationToken ct = default);
     }
 }

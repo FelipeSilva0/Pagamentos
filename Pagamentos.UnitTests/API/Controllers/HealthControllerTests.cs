@@ -5,6 +5,8 @@ using Pagamentos.API.Controllers;
 using Pagamentos.API.Health;
 using Pagamentos.API.Models;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Pagamentos.UnitTests.API.Controllers
@@ -22,23 +24,23 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_ReturnsOk()
+        public async Task GetDetails_ReturnsOk()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             Assert.IsType<OkObjectResult>(result);
         }
 
         [Fact]
-        public void GetDetails_StatusIsOk()
+        public async Task GetDetails_StatusIsOk()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -46,12 +48,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_ApplicationIsCorrect()
+        public async Task GetDetails_ApplicationIsCorrect()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -59,12 +61,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_EnvironmentIsPopulated()
+        public async Task GetDetails_EnvironmentIsPopulated()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -73,12 +75,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_TimestampUtcIsPopulated()
+        public async Task GetDetails_TimestampUtcIsPopulated()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -87,12 +89,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_VersionIsPopulated()
+        public async Task GetDetails_VersionIsPopulated()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -100,12 +102,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_DatabaseCanConnectTrue_WhenDbContextConnects()
+        public async Task GetDetails_DatabaseCanConnectTrue_WhenDbContextConnects()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Returns(true);
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true);
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
@@ -113,12 +115,12 @@ namespace Pagamentos.UnitTests.API.Controllers
         }
 
         [Fact]
-        public void GetDetails_DatabaseCanConnectFalse_WhenExceptionOccurs()
+        public async Task GetDetails_DatabaseCanConnectFalse_WhenExceptionOccurs()
         {
-            _dbHealthCheckMock.Setup(d => d.CanConnect()).Throws(new Exception("DB connection failed"));
+            _dbHealthCheckMock.Setup(d => d.CanConnectAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new Exception("DB connection failed"));
             var controller = new HealthController(_envMock.Object, _dbHealthCheckMock.Object);
 
-            var result = controller.GetDetails();
+            var result = await controller.GetDetails();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var body = Assert.IsType<HealthDetailsResponse>(okResult.Value);
