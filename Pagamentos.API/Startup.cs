@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Pagamentos.Infrastructure.Auth;
+using Pagamentos.API.Health;
 
 namespace Pagamentos.API
 {
@@ -47,6 +48,7 @@ namespace Pagamentos.API
             services.AddScoped<IServicoRepository, ServicoRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IDatabaseHealthCheck, DatabaseHealthCheck>();
 
             services.AddControllers(options => options.Filters.Add(typeof(ValidationFilter)))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUsuarioCommandValidator>());
