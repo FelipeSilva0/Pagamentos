@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Pagamentos.API.Controllers;
+using Pagamentos.API.Models;
 using Xunit;
 
 namespace Pagamentos.UnitTests.API.Controllers
@@ -14,13 +15,8 @@ namespace Pagamentos.UnitTests.API.Controllers
             var result = controller.Get();
 
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(200, okResult.StatusCode);
-
-            var body = okResult.Value;
-            var messageProp = body.GetType().GetProperty("message");
-
-            Assert.NotNull(messageProp);
-            Assert.Equal("pong", messageProp.GetValue(body));
+            var body = Assert.IsType<PongResponse>(okResult.Value);
+            Assert.Equal("pong", body.Message);
         }
     }
 }
